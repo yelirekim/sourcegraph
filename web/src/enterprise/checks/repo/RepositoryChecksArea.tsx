@@ -46,11 +46,7 @@ export class RepositoryChecksArea extends React.Component<Props> {
                     element={<span key="checks">Checks</span>}
                     repoHeaderContributionsLifecycleProps={this.props.repoHeaderContributionsLifecycleProps}
                 />
-                <RepositoryChecksAreaSidebar
-                    className="area__sidebar"
-                    {...transferProps}
-                    routePrefix={this.props.routePrefix}
-                />
+                {/* TODO(sqs): remove sidebar if unused */}
                 <div className="area__content">
                     <Switch>
                         <Route
