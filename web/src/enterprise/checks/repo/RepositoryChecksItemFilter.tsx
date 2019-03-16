@@ -18,7 +18,7 @@ export const RepositoryChecksItemFilter: React.FunctionComponent<Props> = ({ val
         <div className={`input-group ${className}`}>
             <div className="input-group-prepend">
                 {/* tslint:disable-next-line:jsx-no-lambda */}
-                <ButtonDropdown isOpen={isOpen} toggle={() => setIsOpen(!isOpen)} className="info-dropdown d-flex">
+                <ButtonDropdown isOpen={isOpen} toggle={() => setIsOpen(!isOpen)}>
                     <DropdownToggle caret={true}>Filter</DropdownToggle>
                     <DropdownMenu right={true}>
                         <DropdownItem>Open items</DropdownItem>
