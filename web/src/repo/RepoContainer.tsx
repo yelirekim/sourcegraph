@@ -6,6 +6,7 @@ import { Subject, Subscription } from 'rxjs'
 import { catchError, distinctUntilChanged, map, switchMap, tap } from 'rxjs/operators'
 import { redirectToExternalHost } from '.'
 import { WorkspaceRootWithMetadata } from '../../../shared/src/api/client/model'
+import { ActivationProps } from '../../../shared/src/components/activation/Activation'
 import { ExtensionsControllerProps } from '../../../shared/src/extensions/controller'
 import * as GQL from '../../../shared/src/graphql/schema'
 import { PlatformContextProps } from '../../../shared/src/platform/context'
@@ -17,31 +18,49 @@ import { HeroPage } from '../components/HeroPage'
 import { searchQueryForRepoRev } from '../search'
 import { queryUpdates } from '../search/input/QueryInput'
 import { ThemeProps } from '../theme'
+import { RouteDescriptor } from '../util/contributions'
 import { parseBrowserRepoURL, ParsedRepoRev, parseRepoRev } from '../util/url'
 import { GoToCodeHostAction } from './actions/GoToCodeHostAction'
 import { EREPONOTFOUND, EREPOSEEOTHER, fetchRepository, RepoSeeOtherError, ResolvedRev } from './backend'
-import { RepositoryBranchesArea } from './branches/RepositoryBranchesArea'
-import { RepositoryCommitPage } from './commit/RepositoryCommitPage'
-import { RepositoryCompareArea } from './compare/RepositoryCompareArea'
-import { RepositoryReleasesArea } from './releases/RepositoryReleasesArea'
 import { RepoHeader, RepoHeaderActionButton, RepoHeaderContributionsLifecycleProps } from './RepoHeader'
 import { RepoHeaderContributionPortal } from './RepoHeaderContributionPortal'
 import { RepoRevContainer, RepoRevContainerRoute } from './RepoRevContainer'
 import { RepositoryErrorPage } from './RepositoryErrorPage'
-import { RepositoryGitDataContainer } from './RepositoryGitDataContainer'
-import { RepoSettingsArea } from './settings/RepoSettingsArea'
-import { RepositoryStatsArea } from './stats/RepositoryStatsArea'
+
+/**
+ * Props passed to sub-routes of {@link RepoContainer}.
+ */
+export interface RepoContainerContext
+    extends RepoHeaderContributionsLifecycleProps,
+        SettingsCascadeProps,
+        ExtensionsControllerProps,
+        PlatformContextProps,
+        ThemeProps,
+        ActivationProps {
+    repo: GQL.IRepository
+    authenticatedUser: GQL.IUser | null
+
+    /** The URL route match for {@link RepoContainer}. */
+    routePrefix: string
+
+    onDidUpdateRepository: (update: Partial<GQL.IRepository>) => void
+    onDidUpdateExternalLinks: (externalLinks: GQL.IExternalLink[] | undefined) => void
+}
+
+/** A sub-route of {@link RepoContainer}. */
+export interface RepoContainerRoute extends RouteDescriptor<RepoContainerContext> {}
 
 const RepoPageNotFound: React.FunctionComponent = () => (
     <HeroPage icon={MapSearchIcon} title="404: Not Found" subtitle="The repository page was not found." />
 )
 
-export interface RepoContainerProps
+interface RepoContainerProps
     extends RouteComponentProps<{ repoRevAndRest: string }>,
         SettingsCascadeProps,
         PlatformContextProps,
         ExtensionsControllerProps,
         ThemeProps {
+    repoContainerRoutes: ReadonlyArray<RepoContainerRoute>
     repoRevContainerRoutes: ReadonlyArray<RepoRevContainerRoute>
     repoHeaderActionButtons: ReadonlyArray<RepoHeaderActionButton>
     authenticatedUser: GQL.IUser | null
@@ -220,15 +239,17 @@ export class RepoContainer extends React.Component<RepoContainerProps, RepoRevCo
 
         const repoMatchURL = `/${this.state.repoOrError.name}`
 
-        const transferProps = {
+        const context: RepoContainerContext = {
             repo: this.state.repoOrError,
             authenticatedUser: this.props.authenticatedUser,
             isLightTheme: this.props.isLightTheme,
-            repoMatchURL,
+            routePrefix: repoMatchURL,
             settingsCascade: this.props.settingsCascade,
             platformContext: this.props.platformContext,
             extensionsController: this.props.extensionsController,
             ...this.state.repoHeaderContributionsLifecycleProps,
+            onDidUpdateExternalLinks: this.onDidUpdateExternalLinks,
+            onDidUpdateRepository: this.onDidUpdateRepository,
         }
 
         const isSettingsPage =
@@ -291,7 +312,7 @@ export class RepoContainer extends React.Component<RepoContainerProps, RepoRevCo
                                     render={routeComponentProps => (
                                         <RepoRevContainer
                                             {...routeComponentProps}
-                                            {...transferProps}
+                                            {...context}
                                             routes={this.props.repoRevContainerRoutes}
                                             rev={this.state.rev || ''}
                                             resolvedRevOrError={this.state.resolvedRevOrError}
@@ -304,72 +325,20 @@ export class RepoContainer extends React.Component<RepoContainerProps, RepoRevCo
                                     )}
                                 />
                             ))}
-                            <Route
-                                path={`${repoMatchURL}/-/commit/:revspec+`}
-                                key="hardcoded-key" // see https://github.com/ReactTraining/react-router/issues/4578#issuecomment-334489490
-                                // tslint:disable-next-line:jsx-no-lambda
-                                render={routeComponentProps => (
-                                    <RepositoryGitDataContainer repoName={this.state.repoName}>
-                                        <RepositoryCommitPage
-                                            {...routeComponentProps}
-                                            {...transferProps}
-                                            onDidUpdateExternalLinks={this.onDidUpdateExternalLinks}
+                            {this.props.repoContainerRoutes.map(
+                                ({ path, render, exact, condition = () => true }) =>
+                                    condition(context) && (
+                                        <Route
+                                            path={context.routePrefix + path}
+                                            key="hardcoded-key" // see https://github.com/ReactTraining/react-router/issues/4578#issuecomment-334489490
+                                            exact={exact}
+                                            // tslint:disable-next-line:jsx-no-lambda RouteProps.render is an exception
+                                            render={routeComponentProps =>
+                                                render({ ...context, ...routeComponentProps })
+                                            }
                                         />
-                                    </RepositoryGitDataContainer>
-                                )}
-                            />
-                            <Route
-                                path={`${repoMatchURL}/-/branches`}
-                                key="hardcoded-key" // see https://github.com/ReactTraining/react-router/issues/4578#issuecomment-334489490
-                                // tslint:disable-next-line:jsx-no-lambda
-                                render={routeComponentProps => (
-                                    <RepositoryGitDataContainer repoName={this.state.repoName}>
-                                        <RepositoryBranchesArea {...routeComponentProps} {...transferProps} />
-                                    </RepositoryGitDataContainer>
-                                )}
-                            />
-                            <Route
-                                path={`${repoMatchURL}/-/tags`}
-                                key="hardcoded-key" // see https://github.com/ReactTraining/react-router/issues/4578#issuecomment-334489490
-                                // tslint:disable-next-line:jsx-no-lambda
-                                render={routeComponentProps => (
-                                    <RepositoryGitDataContainer repoName={this.state.repoName}>
-                                        <RepositoryReleasesArea {...routeComponentProps} {...transferProps} />
-                                    </RepositoryGitDataContainer>
-                                )}
-                            />
-                            <Route
-                                path={`${repoMatchURL}/-/compare/:spec*`}
-                                key="hardcoded-key" // see https://github.com/ReactTraining/react-router/issues/4578#issuecomment-334489490
-                                // tslint:disable-next-line:jsx-no-lambda
-                                render={routeComponentProps => (
-                                    <RepositoryGitDataContainer repoName={this.state.repoName}>
-                                        <RepositoryCompareArea {...routeComponentProps} {...transferProps} />
-                                    </RepositoryGitDataContainer>
-                                )}
-                            />
-                            <Route
-                                path={`${repoMatchURL}/-/stats`}
-                                key="hardcoded-key" // see https://github.com/ReactTraining/react-router/issues/4578#issuecomment-334489490
-                                // tslint:disable-next-line:jsx-no-lambda
-                                render={routeComponentProps => (
-                                    <RepositoryGitDataContainer repoName={this.state.repoName}>
-                                        <RepositoryStatsArea {...routeComponentProps} {...transferProps} />
-                                    </RepositoryGitDataContainer>
-                                )}
-                            />
-                            <Route
-                                path={`${repoMatchURL}/-/settings`}
-                                key="hardcoded-key" // see https://github.com/ReactTraining/react-router/issues/4578#issuecomment-334489490
-                                // tslint:disable-next-line:jsx-no-lambda
-                                render={routeComponentProps => (
-                                    <RepoSettingsArea
-                                        {...routeComponentProps}
-                                        {...transferProps}
-                                        onDidUpdateRepository={this.onDidUpdateRepository}
-                                    />
-                                )}
-                            />
+                                    )
+                            )}
                             <Route key="hardcoded-key" component={RepoPageNotFound} />
                         </Switch>
                     ) : (

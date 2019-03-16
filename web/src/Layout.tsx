@@ -21,6 +21,7 @@ import { KeybindingsProps } from './keybindings'
 import { IntegrationsToast } from './marketing/IntegrationsToast'
 import { GlobalNavbar } from './nav/GlobalNavbar'
 import { fetchHighlightedFileLines } from './repo/backend'
+import { RepoContainerRoute } from './repo/RepoContainer'
 import { RepoHeaderActionButton } from './repo/RepoHeader'
 import { RepoRevContainerRoute } from './repo/RepoRevContainer'
 import { LayoutRouteProps } from './routes'
@@ -55,6 +56,7 @@ export interface LayoutProps
     userAreaRoutes: ReadonlyArray<UserAreaRoute>
     userAccountSideBarItems: UserAccountSidebarItems
     userAccountAreaRoutes: ReadonlyArray<UserAccountAreaRoute>
+    repoContainerRoutes: ReadonlyArray<RepoContainerRoute>
     repoRevContainerRoutes: ReadonlyArray<RepoRevContainerRoute>
     repoHeaderActionButtons: ReadonlyArray<RepoHeaderActionButton>
     routes: ReadonlyArray<LayoutRouteProps>

@@ -31,6 +31,7 @@ import { KeybindingsProps } from './keybindings'
 import { Layout, LayoutProps } from './Layout'
 import { updateUserSessionStores } from './marketing/util'
 import { createPlatformContext } from './platform/context'
+import { RepoContainerRoute } from './repo/RepoContainer'
 import { RepoHeaderActionButton } from './repo/RepoHeader'
 import { RepoRevContainerRoute } from './repo/RepoRevContainer'
 import { LayoutRouteProps } from './routes'
@@ -57,6 +58,7 @@ export interface SourcegraphWebAppProps extends KeybindingsProps {
     userAreaRoutes: ReadonlyArray<UserAreaRoute>
     userAccountSideBarItems: UserAccountSidebarItems
     userAccountAreaRoutes: ReadonlyArray<UserAccountAreaRoute>
+    repoContainerRoutes: ReadonlyArray<RepoContainerRoute>
     repoRevContainerRoutes: ReadonlyArray<RepoRevContainerRoute>
     repoHeaderActionButtons: ReadonlyArray<RepoHeaderActionButton>
     routes: ReadonlyArray<LayoutRouteProps>
