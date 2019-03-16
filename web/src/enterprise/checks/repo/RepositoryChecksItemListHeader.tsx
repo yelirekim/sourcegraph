@@ -18,13 +18,10 @@ export class RepositoryChecksItemListHeader extends React.Component<Props> {
                 </div>
                 <div className="btn-group mb-3" role="group">
                     <button type="button" className="btn btn-outline-link">
-                        <RadarIcon className="icon-inline" /> Rules
+                        <AccessPointIcon className="icon-inline" /> Rules
                     </button>
                     <button type="button" className="btn btn-outline-link">
                         <HistoryIcon className="icon-inline" /> Activity
-                    </button>
-                    <button type="button" className="btn btn-outline-link">
-                        <AccessPointIcon className="icon-inline" /> Status
                     </button>
                 </div>
             </div>
