@@ -5,7 +5,6 @@ import * as GQL from '../../../../../shared/src/graphql/schema'
 import { HeroPage } from '../../../components/HeroPage'
 import { RepoHeaderContributionsLifecycleProps } from '../../../repo/RepoHeader'
 import { RepoHeaderContributionPortal } from '../../../repo/RepoHeaderContributionPortal'
-import { RepositoryChecksAreaSidebar } from './RepositoryChecksAreaSidebar'
 import { RepositoryChecksOverviewPage } from './RepositoryChecksOverviewPage'
 
 const NotFoundPage = () => (
@@ -40,7 +39,7 @@ export class RepositoryChecksArea extends React.Component<Props> {
         }
 
         return (
-            <div className="repo-checks-area area">
+            <div className="repository-checks-area area">
                 <RepoHeaderContributionPortal
                     position="nav"
                     element={<span key="checks">Checks</span>}

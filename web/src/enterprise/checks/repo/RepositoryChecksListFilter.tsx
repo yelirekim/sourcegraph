@@ -9,9 +9,9 @@ interface Props {
 }
 
 /**
- * The filter control (dropdown and input field) for check items.
+ * The filter control (dropdown and input field) for a list of checks.
  */
-export const RepositoryChecksItemFilter: React.FunctionComponent<Props> = ({ value, className }) => {
+export const RepositoryChecksListFilter: React.FunctionComponent<Props> = ({ value, className }) => {
     const [isOpen, setIsOpen] = useState(false)
 
     return (
@@ -21,20 +21,14 @@ export const RepositoryChecksItemFilter: React.FunctionComponent<Props> = ({ val
                 <ButtonDropdown isOpen={isOpen} toggle={() => setIsOpen(!isOpen)}>
                     <DropdownToggle caret={true}>Filter</DropdownToggle>
                     <DropdownMenu>
-                        <DropdownItem>Open items</DropdownItem>
+                        <DropdownItem>Open</DropdownItem>
                         <DropdownItem>Assigned to you</DropdownItem>
                         <DropdownItem>Acted on by you</DropdownItem>
-                        <DropdownItem>Closed items</DropdownItem>
+                        <DropdownItem>Closed</DropdownItem>
                     </DropdownMenu>
                 </ButtonDropdown>
             </div>
-            <input
-                type="text"
-                className="form-control"
-                aria-label="Filter check items"
-                autoCapitalize="off"
-                value={value}
-            />
+            <input type="text" className="form-control" aria-label="Filter checks" autoCapitalize="off" value={value} />
         </div>
     )
 }

@@ -15,7 +15,7 @@ interface Props {
 /**
  * A button dropdown with filter options shown in the list of repository checks.
  */
-export const RepositoryChecksItemListHeaderFilterButtonDropdown: React.FunctionComponent<Props> = ({
+export const RepositoryChecksListHeaderFilterButtonDropdown: React.FunctionComponent<Props> = ({
     children,
     header,
     items,

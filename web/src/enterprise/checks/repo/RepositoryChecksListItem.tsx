@@ -1,11 +1,10 @@
-import AlertOutlineIcon from 'mdi-react/AlertOutlineIcon'
+import HistoryIcon from 'mdi-react/HistoryIcon'
 import MessageOutlineIcon from 'mdi-react/MessageOutlineIcon'
 import React from 'react'
 
 interface Props {
     author: string
     commitID: string
-    priority: 'urgent' | 'normal'
     count: number
     title: string | React.ReactFragment
     messageCount: number
@@ -13,18 +12,12 @@ interface Props {
     labels?: string[]
 }
 
-const PRIORITY_TO_CLASS_NAME: Record<Props['priority'], string> = {
-    urgent: 'badge-danger',
-    normal: 'badge-secondary',
-}
-
 /**
- * A list item for a check in {@link RepositoryChecksItemList}.
+ * A list item for a check in {@link RepositoryChecksList}.
  */
-export const RepositoryChecksItemListItem: React.FunctionComponent<Props> = ({
+export const RepositoryChecksListItem: React.FunctionComponent<Props> = ({
     author,
     commitID,
-    priority,
     count,
     title,
     messageCount,
@@ -38,26 +31,21 @@ export const RepositoryChecksItemListItem: React.FunctionComponent<Props> = ({
             </div>
             <div className="flex-1">
                 <h3 className="d-flex align-items-center mb-0">
-                    <a href={`#{title}`}>{title}</a>
+                    {/* tslint:disable-next-line:jsx-ban-props */}
+                    <a href={`#${title}`} style={{ color: 'var(--body-color)' }}>
+                        {title}
+                    </a>
                     {count > 1 && <span className="badge badge-secondary ml-1">{count}</span>}
                 </h3>
                 <ul className="list-inline d-flex align-items-center">
                     <li className="list-inline-item">
                         <small className="text-muted">
+                            <HistoryIcon className="icon-inline" />
                             {timeAgo} by {author} in <code>{commitID}</code>
                         </small>
                     </li>
-                    {false && priority === 'urgent' && (
-                        <li className="list-inline-item">
-                            <span
-                                className={`badge ${PRIORITY_TO_CLASS_NAME[priority]} d-flex align-items-center`}
-                                // tslint:disable-next-line:jsx-ban-props
-                                style={{ fontSize: '10px !important' }}
-                            >
-                                <AlertOutlineIcon className="icon-inline mr-1" /> Urgent
-                            </span>
-                        </li>
-                    )}
+                </ul>
+                <ul className="list-inline d-flex align-items-center">
                     {labels && (
                         <li className="list-inline-item">
                             {labels.map((label, i) => (
