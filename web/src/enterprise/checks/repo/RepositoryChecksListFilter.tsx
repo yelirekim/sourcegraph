@@ -28,7 +28,14 @@ export const RepositoryChecksListFilter: React.FunctionComponent<Props> = ({ val
                     </DropdownMenu>
                 </ButtonDropdown>
             </div>
-            <input type="text" className="form-control" aria-label="Filter checks" autoCapitalize="off" value={value} />
+            <input
+                type="text"
+                className="form-control"
+                aria-label="Filter checks"
+                autoCapitalize="off"
+                value={value}
+                readOnly={true}
+            />
         </div>
     )
 }

@@ -1,9 +1,9 @@
 import * as React from 'react'
 import { NavLink } from 'react-router-dom'
 import { SIDEBAR_CARD_CLASS, SIDEBAR_LIST_GROUP_ITEM_ACTION_CLASS } from '../../../components/Sidebar'
-import { RepositoryChecksAreaPageProps } from './RepositoryChecksArea'
+import { RepositoryChecksAreaContext } from './RepositoryChecksArea'
 
-interface Props extends RepositoryChecksAreaPageProps {
+interface Props extends RepositoryChecksAreaContext {
     className: string
     routePrefix: string
 }

@@ -1,28 +1,21 @@
+import H from 'history'
 import HistoryIcon from 'mdi-react/HistoryIcon'
 import MessageOutlineIcon from 'mdi-react/MessageOutlineIcon'
 import React from 'react'
+import { Link } from 'react-router-dom'
+import { Check } from '../data'
 
 interface Props {
-    author: string
-    commitID: string
-    count: number
-    title: string | React.ReactFragment
-    messageCount: number
-    timeAgo: string
-    labels?: string[]
+    check: Check
+    location: H.Location
 }
 
 /**
  * A list item for a check in {@link RepositoryChecksList}.
  */
 export const RepositoryChecksListItem: React.FunctionComponent<Props> = ({
-    author,
-    commitID,
-    count,
-    title,
-    messageCount,
-    timeAgo,
-    labels,
+    check: { id, author, commitID, count, title, messageCount, timeAgo, labels },
+    location,
 }) => (
     <li className="list-group-item p-2">
         <div className="d-flex align-items-start">
@@ -32,12 +25,12 @@ export const RepositoryChecksListItem: React.FunctionComponent<Props> = ({
             <div className="flex-1">
                 <h3 className="d-flex align-items-center mb-0">
                     {/* tslint:disable-next-line:jsx-ban-props */}
-                    <a href={`#${title}`} style={{ color: 'var(--body-color)' }}>
+                    <Link to={`${location.pathname}/${id}`} style={{ color: 'var(--body-color)' }}>
                         {title}
-                    </a>
+                    </Link>
                     {count > 1 && <span className="badge badge-secondary ml-1">{count}</span>}
                 </h3>
-                <ul className="list-inline d-flex align-items-center">
+                <ul className="list-inline d-flex align-items-center mb-1">
                     <li className="list-inline-item">
                         <small className="text-muted">
                             <HistoryIcon className="icon-inline" />
@@ -45,17 +38,15 @@ export const RepositoryChecksListItem: React.FunctionComponent<Props> = ({
                         </small>
                     </li>
                 </ul>
-                <ul className="list-inline d-flex align-items-center">
-                    {labels && (
-                        <li className="list-inline-item">
-                            {labels.map((label, i) => (
-                                <span key={i} className={`badge mr-1 ${badgeColorClass(label)}`}>
-                                    {label}
-                                </span>
-                            ))}
-                        </li>
-                    )}
-                </ul>
+                {labels && (
+                    <div>
+                        {labels.map((label, i) => (
+                            <span key={i} className={`badge mr-1 ${badgeColorClass(label)}`}>
+                                {label}
+                            </span>
+                        ))}
+                    </div>
+                )}
             </div>
             <div>
                 <ul className="list-inline d-flex align-items-center">

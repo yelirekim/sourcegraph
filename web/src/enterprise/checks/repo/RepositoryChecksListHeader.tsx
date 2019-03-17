@@ -1,9 +1,14 @@
-import CheckBoxMultipleOutlineIcon from 'mdi-react/CheckBoxMultipleOutlineIcon'
+import H from 'history'
 import HistoryIcon from 'mdi-react/HistoryIcon'
+import SettingsIcon from 'mdi-react/SettingsIcon'
+import TagOutlineIcon from 'mdi-react/TagOutlineIcon'
 import * as React from 'react'
+import { Link } from 'react-router-dom'
 import { RepositoryChecksListFilter } from './RepositoryChecksListFilter'
 
-interface Props {}
+interface Props {
+    location: H.Location
+}
 
 /**
  * The header for the list of checks.
@@ -16,18 +21,23 @@ export class RepositoryChecksListHeader extends React.Component<Props> {
                     <div className="flex-1 mb-3 mr-2">
                         <RepositoryChecksListFilter className="" value="is:open sort:priority" />
                     </div>
-                    <button type="button" className="btn btn-outline-link mb-3 mr-4">
-                        <HistoryIcon className="icon-inline" /> Activity
-                    </button>
+                    <div className="btn-group mb-3 mr-4" role="group">
+                        <Link to={`${this.props.location.pathname}/-/manage/activity`} className="btn btn-outline-link">
+                            <HistoryIcon className="icon-inline" /> Activity
+                        </Link>
+                        <Link to={`${this.props.location.pathname}/labels`} className="btn btn-outline-link">
+                            <TagOutlineIcon className="icon-inline" /> Labels{' '}
+                            <span className="badge badge-secondary">9</span>
+                        </Link>
+                    </div>
                 </div>
                 <div className="btn-group" role="group">
-                    <button type="button" className="btn btn-outline-link">
-                        <CheckBoxMultipleOutlineIcon className="icon-inline" /> Checks{' '}
-                        <span className="badge badge-secondary">17</span>
-                    </button>
-                    <button type="button" className="btn btn-success">
+                    <Link to={`${this.props.location.pathname}/-/manage`} className="btn btn-outline-link">
+                        <SettingsIcon className="icon-inline" /> Manage{' '}
+                    </Link>
+                    <Link to={`${this.props.location.pathname}/-/manage/new`} className="btn btn-success">
                         New check
-                    </button>
+                    </Link>
                 </div>
             </div>
         )
