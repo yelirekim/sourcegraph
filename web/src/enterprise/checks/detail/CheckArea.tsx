@@ -5,10 +5,11 @@ import { Route, RouteComponentProps, Switch } from 'react-router'
 import { of } from 'rxjs'
 import { switchMap } from 'rxjs/operators'
 import { ErrorLike, isErrorLike } from '../../../../../shared/src/util/errors'
+import { ErrorBoundary } from '../../../components/ErrorBoundary'
 import { HeroPage } from '../../../components/HeroPage'
 import { Check, queryCheck } from '../data'
 import { RepositoryChecksAreaContext } from '../repo/RepositoryChecksArea'
-import { CheckHeader } from './CheckHeader'
+import { CheckAreaHeader } from './CheckAreaHeader'
 import { CheckOverviewPage } from './CheckOverviewPage'
 
 const NotFoundPage = () => (
@@ -42,21 +43,29 @@ export const CheckArea: React.FunctionComponent<Props> = props => {
         return <HeroPage icon={AlertCircleIcon} title="Error" subtitle={checkOrError.message} />
     }
 
-    const context: RepositoryChecksAreaContext & { check: Check } = { ...props, check: checkOrError }
+    const context: RepositoryChecksAreaContext & { check: Check; areaURL: string } = {
+        ...props,
+        check: checkOrError,
+        areaURL: props.match.url,
+    }
 
     return (
-        <div className="check-area">
-            <CheckHeader check={checkOrError} location={props.location} />
-            <Switch>
-                <Route
-                    path={props.match.url}
-                    key="hardcoded-key" // see https://github.com/ReactTraining/react-router/issues/4578#issuecomment-334489490
-                    exact={true}
-                    // tslint:disable-next-line:jsx-no-lambda
-                    render={routeComponentProps => <CheckOverviewPage {...routeComponentProps} {...context} />}
-                />
-                <Route key="hardcoded-key" component={NotFoundPage} />
-            </Switch>
+        <div className="check-area area--vertical">
+            <CheckAreaHeader {...context} />
+            <div className="container pt-3">
+                <ErrorBoundary location={props.location}>
+                    <Switch>
+                        <Route
+                            path={props.match.url}
+                            key="hardcoded-key" // see https://github.com/ReactTraining/react-router/issues/4578#issuecomment-334489490
+                            exact={true}
+                            // tslint:disable-next-line:jsx-no-lambda
+                            render={routeComponentProps => <CheckOverviewPage {...routeComponentProps} {...context} />}
+                        />
+                        <Route key="hardcoded-key" component={NotFoundPage} />
+                    </Switch>
+                </ErrorBoundary>
+            </div>
         </div>
     )
 }

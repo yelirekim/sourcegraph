@@ -34,7 +34,8 @@ export const RepositoryChecksListFilter: React.FunctionComponent<Props> = ({ val
                 aria-label="Filter checks"
                 autoCapitalize="off"
                 value={value}
-                readOnly={true}
+                // tslint:disable-next-line:jsx-no-lambda
+                onChange={() => void 0}
             />
         </div>
     )

@@ -10,7 +10,7 @@ interface Props extends RepositoryChecksAreaContext, RouteComponentProps<{}>, Re
  * The repository checks overview page.
  */
 export const RepositoryChecksOverviewPage: React.FunctionComponent<Props> = ({ location }) => (
-    <div className="repository-checks-overview-page">
+    <div className="repository-checks-overview-page mt-3 container">
         <RepositoryChecksList location={location} />
     </div>
 )
