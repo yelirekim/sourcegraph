@@ -28,9 +28,9 @@ export class RepositoryChecksItemList extends React.Component<Props> {
                         </div>
                         <div className="font-weight-normal flex-1">
                             <strong>
-                                <AlertOutlineIcon className="icon-inline" /> 8 need attention &nbsp;{' '}
+                                <AlertOutlineIcon className="icon-inline" /> 8 open &nbsp;{' '}
                             </strong>
-                            <CheckIcon className="icon-inline" /> 27 others
+                            <CheckIcon className="icon-inline" /> 27 closed
                         </div>
                         <div>
                             <RepositoryChecksItemListHeaderFilterButtonDropdown
