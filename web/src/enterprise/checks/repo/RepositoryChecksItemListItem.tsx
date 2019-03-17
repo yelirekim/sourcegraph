@@ -10,6 +10,7 @@ interface Props {
     title: string | React.ReactFragment
     messageCount: number
     timeAgo: string
+    labels?: string[]
 }
 
 const PRIORITY_TO_CLASS_NAME: Record<Props['priority'], string> = {
@@ -28,14 +29,15 @@ export const RepositoryChecksItemListItem: React.FunctionComponent<Props> = ({
     title,
     messageCount,
     timeAgo,
+    labels,
 }) => (
     <li className="list-group-item p-2">
         <div className="d-flex align-items-start">
-            <div className="form-check mr-2">
+            <div className="form-check mx-2">
                 <input className="form-check-input position-static" type="checkbox" aria-label="Select item" />
             </div>
             <div className="flex-1">
-                <h3 className="d-flex align-items-center">
+                <h3 className="d-flex align-items-center mb-0">
                     <a href={`#{title}`}>{title}</a>
                     {count > 1 && <span className="badge badge-secondary ml-1">{count}</span>}
                 </h3>
@@ -45,7 +47,7 @@ export const RepositoryChecksItemListItem: React.FunctionComponent<Props> = ({
                             {timeAgo} by {author} in <code>{commitID}</code>
                         </small>
                     </li>
-                    {priority === 'urgent' && (
+                    {false && priority === 'urgent' && (
                         <li className="list-inline-item">
                             <span
                                 className={`badge ${PRIORITY_TO_CLASS_NAME[priority]} d-flex align-items-center`}
@@ -54,6 +56,15 @@ export const RepositoryChecksItemListItem: React.FunctionComponent<Props> = ({
                             >
                                 <AlertOutlineIcon className="icon-inline mr-1" /> Urgent
                             </span>
+                        </li>
+                    )}
+                    {labels && (
+                        <li className="list-inline-item">
+                            {labels.map((label, i) => (
+                                <span key={i} className={`badge mr-1 ${badgeColorClass(label)}`}>
+                                    {label}
+                                </span>
+                            ))}
                         </li>
                     )}
                 </ul>
@@ -72,3 +83,12 @@ export const RepositoryChecksItemListItem: React.FunctionComponent<Props> = ({
         </div>
     </li>
 )
+
+function badgeColorClass(label: string): string {
+    if (label === 'security' || label.endsWith('sec')) {
+        return 'badge-danger'
+    }
+    const CLASSES = ['badge-primary', 'badge-warning', 'badge-info', 'badge-success']
+    const k = label.split('').reduce((sum, c) => (sum += c.charCodeAt(0)), 0)
+    return CLASSES[k % (CLASSES.length - 1)]
+}

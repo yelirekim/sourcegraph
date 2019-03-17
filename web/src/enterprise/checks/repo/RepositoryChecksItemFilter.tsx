@@ -20,7 +20,7 @@ export const RepositoryChecksItemFilter: React.FunctionComponent<Props> = ({ val
                 {/* tslint:disable-next-line:jsx-no-lambda */}
                 <ButtonDropdown isOpen={isOpen} toggle={() => setIsOpen(!isOpen)}>
                     <DropdownToggle caret={true}>Filter</DropdownToggle>
-                    <DropdownMenu right={true}>
+                    <DropdownMenu>
                         <DropdownItem>Open items</DropdownItem>
                         <DropdownItem>Assigned to you</DropdownItem>
                         <DropdownItem>Acted on by you</DropdownItem>
