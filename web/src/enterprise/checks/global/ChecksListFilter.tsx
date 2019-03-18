@@ -11,7 +11,7 @@ interface Props {
 /**
  * The filter control (dropdown and input field) for a list of checks.
  */
-export const RepositoryChecksListFilter: React.FunctionComponent<Props> = ({ value, className }) => {
+export const ChecksListFilter: React.FunctionComponent<Props> = ({ value, className }) => {
     const [isOpen, setIsOpen] = useState(false)
 
     return (

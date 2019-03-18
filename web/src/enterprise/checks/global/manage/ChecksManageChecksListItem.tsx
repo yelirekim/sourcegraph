@@ -5,6 +5,6 @@ interface Props {
     node: Check
 }
 
-export const RepositoryChecksManageChecksListItem: React.FunctionComponent<Props> = ({ node }) => (
+export const ChecksManageChecksListItem: React.FunctionComponent<Props> = ({ node }) => (
     <li className="list-group-item">{node.title}</li>
 )

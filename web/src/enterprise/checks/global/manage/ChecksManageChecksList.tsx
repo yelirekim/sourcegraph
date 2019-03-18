@@ -3,7 +3,7 @@ import * as React from 'react'
 import { FilteredConnection } from '../../../../components/FilteredConnection'
 import { queryChecks } from '../../data'
 import { Check } from '../../data'
-import { RepositoryChecksManageChecksListItem } from './RepositoryChecksManageChecksListItem'
+import { ChecksManageChecksListItem } from './ChecksManageChecksListItem'
 
 interface Props {
     history: H.History
@@ -11,17 +11,17 @@ interface Props {
 }
 
 /**
- * The list of repository checks in the checks management area.
+ * The list of checks in the checks management area.
  */
-export const RepositoryChecksManageChecksList: React.FunctionComponent<Props> = ({ history, location }) => (
-    <div className="repository-checks-manage-checks-list">
+export const ChecksManageChecksList: React.FunctionComponent<Props> = ({ history, location }) => (
+    <div className="checks-manage-checks-list">
         <FilteredConnection<Check>
             listClassName="list-group list-group-flush"
             listComponent="ul"
             noun="check"
             pluralNoun="checks"
             queryConnection={queryChecks}
-            nodeComponent={RepositoryChecksManageChecksListItem}
+            nodeComponent={ChecksManageChecksListItem}
             hideSearch={false}
             noSummaryIfAllNodesVisible={true}
             history={history}

@@ -44,7 +44,7 @@ export const CHECKS: Check[] = [
         commitID: '17c630d',
         author: 'jleiner',
         count: 112,
-        title: 'Potential API secret keys (high-entropy)',
+        title: 'Potential API secret keys',
         messageCount: 3,
         timeAgo: '1 day ago',
         labels: ['security', 'infosec', 'noisy'],

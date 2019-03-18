@@ -8,7 +8,7 @@ import { ErrorLike, isErrorLike } from '../../../../../shared/src/util/errors'
 import { ErrorBoundary } from '../../../components/ErrorBoundary'
 import { HeroPage } from '../../../components/HeroPage'
 import { Check, queryCheck } from '../data'
-import { RepositoryChecksAreaContext } from '../repo/RepositoryChecksArea'
+import { ChecksAreaContext } from '../global/ChecksArea'
 import { CheckActivityPage } from './CheckActivityPage'
 import { CheckAreaHeader } from './CheckAreaHeader'
 import { CheckManagePage } from './CheckManagePage'
@@ -18,12 +18,12 @@ const NotFoundPage = () => (
     <HeroPage icon={MapSearchIcon} title="404: Not Found" subtitle="Sorry, the requested check page was not found." />
 )
 
-interface Props extends RepositoryChecksAreaContext, RouteComponentProps<{ checkID: string }> {}
+interface Props extends ChecksAreaContext, RouteComponentProps<{ checkID: string }> {}
 
 const LOADING: 'loading' = 'loading'
 
 /**
- * The area for a single check (in a repository).
+ * The area for a single check.
  */
 export const CheckArea: React.FunctionComponent<Props> = props => {
     const [checkOrError, setCheckOrError] = useState<typeof LOADING | Check | ErrorLike>(LOADING)
@@ -45,7 +45,7 @@ export const CheckArea: React.FunctionComponent<Props> = props => {
         return <HeroPage icon={AlertCircleIcon} title="Error" subtitle={checkOrError.message} />
     }
 
-    const context: RepositoryChecksAreaContext & { check: Check; areaURL: string } = {
+    const context: ChecksAreaContext & { check: Check; areaURL: string } = {
         ...props,
         check: checkOrError,
         areaURL: props.match.url,

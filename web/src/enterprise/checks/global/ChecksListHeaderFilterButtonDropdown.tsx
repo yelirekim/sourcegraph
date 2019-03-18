@@ -13,13 +13,9 @@ interface Props {
 }
 
 /**
- * A button dropdown with filter options shown in the list of repository checks.
+ * A button dropdown with filter options shown in the list of checks.
  */
-export const RepositoryChecksListHeaderFilterButtonDropdown: React.FunctionComponent<Props> = ({
-    children,
-    header,
-    items,
-}) => {
+export const ChecksListHeaderFilterButtonDropdown: React.FunctionComponent<Props> = ({ children, header, items }) => {
     const [isOpen, setIsOpen] = React.useState(false)
 
     return (

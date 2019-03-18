@@ -6,9 +6,6 @@ import * as GQL from '../../../../../shared/src/graphql/schema'
 import { HeroPage } from '../../../components/HeroPage'
 import { RepoHeaderContributionsLifecycleProps } from '../../../repo/RepoHeader'
 import { RepoHeaderContributionPortal } from '../../../repo/RepoHeaderContributionPortal'
-import { CheckArea } from '../detail/CheckArea'
-import { RepositoryChecksManageArea } from './manage/RepositoryChecksManageArea'
-import { RepositoryChecksOverviewPage } from './RepositoryChecksOverviewPage'
 
 const NotFoundPage = () => (
     <HeroPage
@@ -37,10 +34,6 @@ interface Props extends RepositoryChecksAreaContext, RouteComponentProps<{}>, Re
  */
 export class RepositoryChecksArea extends React.Component<Props> {
     public render(): JSX.Element | null {
-        const context: RepositoryChecksAreaContext = {
-            repo: this.props.repo,
-        }
-
         return (
             <div className="repository-checks-area area--vertical pt-0">
                 <RepoHeaderContributionPortal
@@ -52,35 +45,8 @@ export class RepositoryChecksArea extends React.Component<Props> {
                     }
                     repoHeaderContributionsLifecycleProps={this.props.repoHeaderContributionsLifecycleProps}
                 />
-                {/* TODO(sqs): remove sidebar if unused */}
                 <Switch>
-                    <Route
-                        path={this.props.match.url}
-                        key="hardcoded-key" // see https://github.com/ReactTraining/react-router/issues/4578#issuecomment-334489490
-                        exact={true}
-                        // tslint:disable-next-line:jsx-no-lambda
-                        render={routeComponentProps => (
-                            <RepositoryChecksOverviewPage {...routeComponentProps} {...context} />
-                        )}
-                    />
-                    <Route
-                        path={`${this.props.match.url}/-/manage`}
-                        key="hardcoded-key" // see https://github.com/ReactTraining/react-router/issues/4578#issuecomment-334489490
-                        // tslint:disable-next-line:jsx-no-lambda
-                        render={routeComponentProps => (
-                            <RepositoryChecksManageArea
-                                {...routeComponentProps}
-                                {...context}
-                                repoHeaderContributionsLifecycleProps={this.props.repoHeaderContributionsLifecycleProps}
-                            />
-                        )}
-                    />
-                    <Route
-                        path={`${this.props.match.url}/:checkID`}
-                        key="hardcoded-key" // see https://github.com/ReactTraining/react-router/issues/4578#issuecomment-334489490
-                        // tslint:disable-next-line:jsx-no-lambda
-                        render={routeComponentProps => <CheckArea {...routeComponentProps} {...context} />}
-                    />
+                    {/* TODO(sqs) */}
                     <Route key="hardcoded-key" component={NotFoundPage} />
                 </Switch>
             </div>

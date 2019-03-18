@@ -3,20 +3,20 @@ import AlertOutlineIcon from 'mdi-react/AlertOutlineIcon'
 import CheckIcon from 'mdi-react/CheckIcon'
 import * as React from 'react'
 import { CHECKS } from '../data'
-import { RepositoryChecksListHeader } from './RepositoryChecksListHeader'
-import { RepositoryChecksListHeaderFilterButtonDropdown } from './RepositoryChecksListHeaderFilterButtonDropdown'
-import { RepositoryChecksListItem } from './RepositoryChecksListItem'
+import { ChecksListHeader } from './ChecksListHeader'
+import { ChecksListHeaderFilterButtonDropdown } from './ChecksListHeaderFilterButtonDropdown'
+import { ChecksListItem } from './ChecksListItem'
 
 interface Props {
     location: H.Location
 }
 
 /**
- * The list of repository checks with a header.
+ * The list of checks with a header.
  */
-export const RepositoryChecksList: React.FunctionComponent<Props> = ({ location }) => (
-    <div className="repository-checks-list">
-        <RepositoryChecksListHeader location={location} />
+export const ChecksList: React.FunctionComponent<Props> = ({ location }) => (
+    <div className="checks-list">
+        <ChecksListHeader location={location} />
         <div className="card">
             <div className="card-header d-flex align-items-center justify-content-between">
                 <div className="form-check mx-2">
@@ -29,13 +29,13 @@ export const RepositoryChecksList: React.FunctionComponent<Props> = ({ location 
                     <CheckIcon className="icon-inline" /> 27 closed
                 </div>
                 <div>
-                    <RepositoryChecksListHeaderFilterButtonDropdown
+                    <ChecksListHeaderFilterButtonDropdown
                         header="Filter by who's assigned"
                         items={['sqs (you)', 'ekonev', 'jleiner', 'ziyang', 'kting7', 'ffranksena']}
                     >
                         Assignee
-                    </RepositoryChecksListHeaderFilterButtonDropdown>
-                    <RepositoryChecksListHeaderFilterButtonDropdown
+                    </ChecksListHeaderFilterButtonDropdown>
+                    <ChecksListHeaderFilterButtonDropdown
                         header="Filter by label"
                         items={[
                             'perf',
@@ -52,18 +52,18 @@ export const RepositoryChecksList: React.FunctionComponent<Props> = ({ location 
                         ]}
                     >
                         Labels
-                    </RepositoryChecksListHeaderFilterButtonDropdown>
-                    <RepositoryChecksListHeaderFilterButtonDropdown
+                    </ChecksListHeaderFilterButtonDropdown>
+                    <ChecksListHeaderFilterButtonDropdown
                         header="Sort by"
                         items={['Priority', 'Most recently updated', 'Least recently updated']}
                     >
                         Sort
-                    </RepositoryChecksListHeaderFilterButtonDropdown>
+                    </ChecksListHeaderFilterButtonDropdown>
                 </div>
             </div>
             <ul className="list-group list-group-flush">
                 {CHECKS.map((check, i) => (
-                    <RepositoryChecksListItem key={i} location={location} check={check} />
+                    <ChecksListItem key={i} location={location} check={check} />
                 ))}
             </ul>
         </div>

@@ -42,7 +42,7 @@ const (
 	routeRepoCompare    = "repo-compare"
 	routeRepoStats      = "repo-stats"
 	routeRepoGraph      = "repo-graph"
-	routeRepoChecks     = "repo-checks"
+	routeChecks         = "checks"
 	routeThreads        = "threads"
 	routeTree           = "tree"
 	routeBlob           = "blob"
@@ -139,6 +139,7 @@ func newRouter() *mux.Router {
 	r.PathPrefix("/extensions").Methods("GET").Name(routeExtensions)
 	r.PathPrefix("/help").Methods("GET").Name(routeHelp)
 	r.PathPrefix("/explore").Methods("GET").Name(routeExplore)
+	r.PathPrefix("/checks").Methods("GET").Name(routeChecks)
 
 	// Legacy redirects
 	r.Path("/login").Methods("GET").Name(routeLegacyLogin)
@@ -156,7 +157,6 @@ func newRouter() *mux.Router {
 
 	repoRev.PathPrefix("/commits").Methods("GET").Name(routeRepoCommits)
 	repoRev.PathPrefix("/graph").Methods("GET").Name(routeRepoGraph)
-	repoRev.PathPrefix("/checks").Methods("GET").Name(routeRepoChecks)
 
 	// blob
 	repoRev.Path("/blob{Path:.*}").Methods("GET").Name(routeBlob)
@@ -208,7 +208,7 @@ func initRouter() {
 	router.Get(routeRepoCompare).Handler(handler(serveBasicPageString("Compare - Sourcegraph")))
 	router.Get(routeRepoStats).Handler(handler(serveBasicPageString("Stats - Sourcegraph")))
 	router.Get(routeRepoGraph).Handler(handler(serveBasicPageString("Repository graph - Sourcegraph")))
-	router.Get(routeRepoChecks).Handler(handler(serveBasicPageString("Checks - Sourcegraph")))
+	router.Get(routeChecks).Handler(handler(serveBasicPageString("Checks - Sourcegraph")))
 	router.Get(routeSearchScope).Handler(handler(serveBasicPageString("Search scope - Sourcegraph")))
 	router.Get(routeSurvey).Handler(handler(serveBasicPageString("Survey - Sourcegraph")))
 	router.Get(routeSurveyScore).Handler(handler(serveBasicPageString("Survey - Sourcegraph")))

@@ -1,6 +1,5 @@
 import H from 'history'
 import CheckboxMultipleBlankOutlineIcon from 'mdi-react/CheckboxMultipleBlankOutlineIcon'
-import HistoryIcon from 'mdi-react/HistoryIcon'
 import MessageOutlineIcon from 'mdi-react/MessageOutlineIcon'
 import React from 'react'
 import { Link } from 'react-router-dom'
@@ -12,9 +11,9 @@ interface Props {
 }
 
 /**
- * A list item for a check in {@link RepositoryChecksList}.
+ * A list item for a check in {@link ChecksList}.
  */
-export const RepositoryChecksListItem: React.FunctionComponent<Props> = ({ check, location }) => (
+export const ChecksListItem: React.FunctionComponent<Props> = ({ check, location }) => (
     <li className="list-group-item p-2">
         <div className="d-flex align-items-start">
             <div
