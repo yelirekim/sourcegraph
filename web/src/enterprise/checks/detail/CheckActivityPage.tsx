@@ -7,14 +7,10 @@ interface Props {
 }
 
 /**
- * The overview page for a single check.
- *
- * TODO(sqs): figure out how this interacts with changes - it seems the check would find multiple
- * hits and you might want to group them arbitrarily into batches that you will address - that is a
- * "change".
+ * The activity page for a single check.
  */
-export const CheckOverviewPage: React.FunctionComponent<Props> = ({ check }) => (
-    <div className="check-overview-page">
+export const CheckActivityPage: React.FunctionComponent<Props> = ({ check }) => (
+    <div className="check-activity-page">
         <ul className="list-inline d-flex align-items-center mb-1">
             <li className="list-inline-item">
                 <small className="text-muted">

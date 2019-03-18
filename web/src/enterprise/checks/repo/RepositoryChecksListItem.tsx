@@ -1,4 +1,5 @@
 import H from 'history'
+import CheckboxMultipleBlankOutlineIcon from 'mdi-react/CheckboxMultipleBlankOutlineIcon'
 import HistoryIcon from 'mdi-react/HistoryIcon'
 import MessageOutlineIcon from 'mdi-react/MessageOutlineIcon'
 import React from 'react'
@@ -13,34 +14,32 @@ interface Props {
 /**
  * A list item for a check in {@link RepositoryChecksList}.
  */
-export const RepositoryChecksListItem: React.FunctionComponent<Props> = ({
-    check: { id, author, commitID, count, title, messageCount, timeAgo, labels },
-    location,
-}) => (
+export const RepositoryChecksListItem: React.FunctionComponent<Props> = ({ check, location }) => (
     <li className="list-group-item p-2">
         <div className="d-flex align-items-start">
-            <div className="form-check mx-2">
+            <div
+                className="form-check mx-2"
+                /* tslint:disable-next-line:jsx-ban-props */
+                style={{ marginTop: '2px' /* stylelint-disable-line declaration-property-unit-whitelist */ }}
+            >
                 <input className="form-check-input position-static" type="checkbox" aria-label="Select item" />
             </div>
+            <CheckboxMultipleBlankOutlineIcon
+                className={`icon-inline small mr-2 mt-1 ${checkIconColorClass(check)}`}
+                data-tooltip={checkIconTooltip(check)}
+            />
             <div className="flex-1">
                 <h3 className="d-flex align-items-center mb-0">
                     {/* tslint:disable-next-line:jsx-ban-props */}
-                    <Link to={`${location.pathname}/${id}`} style={{ color: 'var(--body-color)' }}>
-                        {title}
+                    <Link to={`${location.pathname}/${check.id}`} style={{ color: 'var(--body-color)' }}>
+                        {check.title}
                     </Link>
-                    {count > 1 && <span className="badge badge-secondary ml-1">{count}</span>}
+                    {check.count > 1 && <span className="badge badge-secondary ml-1">{check.count}</span>}
                 </h3>
-                <ul className="list-inline d-flex align-items-center mb-1">
-                    <li className="list-inline-item">
-                        <small className="text-muted">
-                            <HistoryIcon className="icon-inline" />
-                            {timeAgo} by {author} in <code>{commitID}</code>
-                        </small>
-                    </li>
-                </ul>
-                {labels && (
+
+                {check.labels && (
                     <div>
-                        {labels.map((label, i) => (
+                        {check.labels.map((label, i) => (
                             <span key={i} className={`badge mr-1 ${badgeColorClass(label)}`}>
                                 {label}
                             </span>
@@ -50,10 +49,10 @@ export const RepositoryChecksListItem: React.FunctionComponent<Props> = ({
             </div>
             <div>
                 <ul className="list-inline d-flex align-items-center">
-                    {messageCount > 0 && (
+                    {check.messageCount > 0 && (
                         <li className="list-inline-item">
                             <small className="text-muted">
-                                <MessageOutlineIcon className="icon-inline" /> {messageCount}
+                                <MessageOutlineIcon className="icon-inline" /> {check.messageCount}
                             </small>
                         </li>
                     )}
@@ -62,6 +61,28 @@ export const RepositoryChecksListItem: React.FunctionComponent<Props> = ({
         </div>
     </li>
 )
+
+function checkIconColorClass({ status }: Pick<Check, 'status'>): string {
+    switch (status) {
+        case 'open':
+            return 'text-danger'
+        case 'closed':
+            return 'text-success'
+        case 'disabled':
+            return 'text-muted'
+    }
+}
+
+function checkIconTooltip({ status }: Pick<Check, 'status'>): string {
+    switch (status) {
+        case 'open':
+            return 'Open check (needs attention)'
+        case 'closed':
+            return 'Closed check (no action needed)'
+        case 'disabled':
+            return 'Disabled check'
+    }
+}
 
 function badgeColorClass(label: string): string {
     if (label === 'security' || label.endsWith('sec')) {

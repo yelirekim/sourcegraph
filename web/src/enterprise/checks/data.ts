@@ -5,6 +5,7 @@ import { Connection, FilteredConnectionQueryArgs } from '../../components/Filter
 export interface Check {
     id: string
     title: string
+    status: 'open' | 'closed' | 'disabled'
     labels: string[]
 
     commitID: string
@@ -17,6 +18,7 @@ export interface Check {
 export const CHECKS: Check[] = [
     {
         id: 'w8aolhf',
+        status: 'open',
         commitID: '0c3c511',
         author: 'ekonev',
         count: 217,
@@ -27,6 +29,7 @@ export const CHECKS: Check[] = [
     },
     {
         id: 'ahvn4yqf',
+        status: 'open',
         commitID: '8c3537f',
         author: 'jleiner',
         count: 73,
@@ -37,6 +40,7 @@ export const CHECKS: Check[] = [
     },
     {
         id: 'ia8uh4gy',
+        status: 'open',
         commitID: '17c630d',
         author: 'jleiner',
         count: 112,
@@ -47,6 +51,7 @@ export const CHECKS: Check[] = [
     },
     {
         id: '8727gzq4',
+        status: 'open',
         commitID: '910c03',
         author: 'blslevitsky',
         count: 2,
@@ -57,6 +62,7 @@ export const CHECKS: Check[] = [
     },
     {
         id: '239bn35a',
+        status: 'open',
         commitID: 'af7b381',
         author: 'kting7',
         count: 3,
@@ -67,6 +73,7 @@ export const CHECKS: Check[] = [
     },
     {
         id: '76t3syua',
+        status: 'open',
         commitID: '0cba83d',
         author: 'ziyang',
         count: 2,
@@ -77,6 +84,7 @@ export const CHECKS: Check[] = [
     },
     {
         id: 'dbfni7gmo',
+        status: 'open',
         commitID: 'c8164ef',
         author: 'ffranksena',
         count: 8,
@@ -87,6 +95,7 @@ export const CHECKS: Check[] = [
     },
     {
         id: '3wsdfty78',
+        status: 'open',
         commitID: '83c713',
         author: 'aconnor93',
         count: 3,

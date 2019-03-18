@@ -9,7 +9,9 @@ import { ErrorBoundary } from '../../../components/ErrorBoundary'
 import { HeroPage } from '../../../components/HeroPage'
 import { Check, queryCheck } from '../data'
 import { RepositoryChecksAreaContext } from '../repo/RepositoryChecksArea'
+import { CheckActivityPage } from './CheckActivityPage'
 import { CheckAreaHeader } from './CheckAreaHeader'
+import { CheckManagePage } from './CheckManagePage'
 import { CheckOverviewPage } from './CheckOverviewPage'
 
 const NotFoundPage = () => (
@@ -61,6 +63,20 @@ export const CheckArea: React.FunctionComponent<Props> = props => {
                             exact={true}
                             // tslint:disable-next-line:jsx-no-lambda
                             render={routeComponentProps => <CheckOverviewPage {...routeComponentProps} {...context} />}
+                        />
+                        <Route
+                            path={`${props.match.url}/activity`}
+                            key="hardcoded-key" // see https://github.com/ReactTraining/react-router/issues/4578#issuecomment-334489490
+                            exact={true}
+                            // tslint:disable-next-line:jsx-no-lambda
+                            render={routeComponentProps => <CheckActivityPage {...routeComponentProps} {...context} />}
+                        />
+                        <Route
+                            path={`${props.match.url}/manage`}
+                            key="hardcoded-key" // see https://github.com/ReactTraining/react-router/issues/4578#issuecomment-334489490
+                            exact={true}
+                            // tslint:disable-next-line:jsx-no-lambda
+                            render={routeComponentProps => <CheckManagePage {...routeComponentProps} {...context} />}
                         />
                         <Route key="hardcoded-key" component={NotFoundPage} />
                     </Switch>
