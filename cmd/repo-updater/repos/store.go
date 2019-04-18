@@ -278,6 +278,7 @@ const listReposQueryFmtstr = `
 SELECT
   id,
   name,
+  uri,
   description,
   language,
   created_at,
@@ -399,6 +400,7 @@ func upsertReposQuery(repos []*Repo) (_ *sqlf.Query, err error) {
 	type record struct {
 		ID                  uint32          `json:"id"`
 		Name                string          `json:"name"`
+		URI                 string          `json:"uri"`
 		Description         string          `json:"description"`
 		Language            string          `json:"language"`
 		CreatedAt           time.Time       `json:"created_at"`
@@ -429,6 +431,7 @@ func upsertReposQuery(repos []*Repo) (_ *sqlf.Query, err error) {
 		records = append(records, record{
 			ID:                  r.ID,
 			Name:                r.Name,
+			URI:                 r.URI,
 			Description:         r.Description,
 			Language:            r.Language,
 			CreatedAt:           r.CreatedAt.UTC(),
@@ -474,6 +477,7 @@ WITH batch AS (
   AS (
       id                    integer,
       name                  citext,
+      uri                   citext,
       description           text,
       language              text,
       created_at            timestamptz,
@@ -501,6 +505,7 @@ updated AS (
   UPDATE repo
   SET
     name                  = batch.name,
+    uri                   = batch.uri,
     description           = batch.description,
     language              = batch.language,
     created_at            = COALESCE(batch.created_at, repo.created_at),
@@ -538,6 +543,7 @@ updated AS (
 inserted AS (
   INSERT INTO repo (
     name,
+    uri,
     description,
     language,
     created_at,
@@ -554,6 +560,7 @@ inserted AS (
   )
   SELECT
     name,
+    uri,
     description,
     language,
     created_at,
@@ -593,6 +600,7 @@ inserted AS (
 SELECT
   GREATEST(updated.id, inserted.id, batch.id) AS id,
   COALESCE(updated.name, inserted.name, batch.name) AS name,
+  COALESCE(updated.uri, inserted.uri, batch.uri) AS uri,
   COALESCE(updated.description, inserted.description, batch.description) AS description,
   COALESCE(updated.language, inserted.language, batch.language) AS language,
   COALESCE(updated.created_at, inserted.created_at, batch.created_at) AS created_at,
@@ -687,6 +695,7 @@ func scanRepo(r *Repo, s scanner) error {
 	err := s.Scan(
 		&r.ID,
 		&r.Name,
+		&r.URI,
 		&r.Description,
 		&r.Language,
 		&r.CreatedAt,
