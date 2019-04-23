@@ -4,7 +4,7 @@ import '../../config/polyfill'
 
 import { Endpoint } from '@sourcegraph/comlink'
 import { without } from 'lodash'
-import { fromEventPattern, noop, Observable } from 'rxjs'
+import { fromEventPattern, noop, Observable, throwError } from 'rxjs'
 import { bufferCount, filter, groupBy, map, mergeMap, switchMap, take } from 'rxjs/operators'
 import DPT from 'webext-domain-permission-toggle'
 import { createExtensionHostWorker } from '../../../../../shared/src/api/extension/worker'
@@ -20,6 +20,7 @@ import { featureFlagDefaults, FeatureFlags } from '../../browser/types'
 import initializeCli from '../../libs/cli'
 import { initSentry } from '../../libs/sentry'
 import { createBlobURLForBundle } from '../../platform/worker'
+import { PrivateRepoPublicSourcegraphComError } from '../../shared/backend/errors'
 import { requestOptions } from '../../shared/backend/graphql'
 import { resolveClientConfiguration } from '../../shared/backend/server'
 import { DEFAULT_SOURCEGRAPH_URL, setSourcegraphUrl } from '../../shared/util/context'
@@ -52,11 +53,14 @@ const configureOmnibox = (serverUrl: string) => {
     })
 }
 
-const queryGraphQL: PlatformContext['queryGraphQL'] = (request, variables) =>
+const queryGraphQL: PlatformContext['queryGraphQL'] = (request, variables, mightContainPrivateInfo) =>
     storage.observeSync('sourcegraphURL').pipe(
         take(1),
-        switchMap(baseUrl =>
-            requestGraphQL({
+        switchMap(baseUrl => {
+            if (mightContainPrivateInfo && baseUrl === DEFAULT_SOURCEGRAPH_URL) {
+                return throwError(new PrivateRepoPublicSourcegraphComError('query'))
+            }
+            return requestGraphQL({
                 request: gql`
                     ${request}
                 `,
@@ -64,8 +68,8 @@ const queryGraphQL: PlatformContext['queryGraphQL'] = (request, variables) =>
                 baseUrl,
                 ...requestOptions,
             })
-        )
-    ) as any
+        })
+    ) as any // TODO(lguychard) remove any cast
 
 initializeCli(omnibox, queryGraphQL)
 
@@ -290,12 +294,13 @@ runtime.onMessage((message, _, cb) => {
                 })
             return true
         case 'requestGraphQL':
-            const { request, variables } = message.payload
+            const { request, variables, mightContainPrivateInfo } = message.payload
             queryGraphQL(
                 gql`
                     ${request}
                 `,
-                variables
+                variables,
+                mightContainPrivateInfo
             )
                 .toPromise()
                 .then(result => {
