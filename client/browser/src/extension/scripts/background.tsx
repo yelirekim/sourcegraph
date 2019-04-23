@@ -5,9 +5,11 @@ import '../../config/polyfill'
 import { Endpoint } from '@sourcegraph/comlink'
 import { without } from 'lodash'
 import { fromEventPattern, noop, Observable } from 'rxjs'
-import { bufferCount, filter, groupBy, map, mergeMap } from 'rxjs/operators'
+import { bufferCount, filter, groupBy, map, mergeMap, switchMap, take } from 'rxjs/operators'
 import DPT from 'webext-domain-permission-toggle'
 import { createExtensionHostWorker } from '../../../../../shared/src/api/extension/worker'
+import { gql, requestGraphQL } from '../../../../../shared/src/graphql/graphql'
+import { PlatformContext } from '../../../../../shared/src/platform/context'
 import * as browserAction from '../../browser/browserAction'
 import * as omnibox from '../../browser/omnibox'
 import * as permissions from '../../browser/permissions'
@@ -18,7 +20,7 @@ import { featureFlagDefaults, FeatureFlags } from '../../browser/types'
 import initializeCli from '../../libs/cli'
 import { initSentry } from '../../libs/sentry'
 import { createBlobURLForBundle } from '../../platform/worker'
-import { requestGraphQL } from '../../shared/backend/graphql'
+import { requestOptions } from '../../shared/backend/graphql'
 import { resolveClientConfiguration } from '../../shared/backend/server'
 import { DEFAULT_SOURCEGRAPH_URL, setSourcegraphUrl } from '../../shared/util/context'
 import { assertEnv } from '../envAssertion'
@@ -50,7 +52,22 @@ const configureOmnibox = (serverUrl: string) => {
     })
 }
 
-initializeCli(omnibox)
+const queryGraphQL: PlatformContext['queryGraphQL'] = (request, variables) =>
+    storage.observeSync('sourcegraphURL').pipe(
+        take(1),
+        switchMap(baseUrl =>
+            requestGraphQL({
+                request: gql`
+                    ${request}
+                `,
+                variables,
+                baseUrl,
+                ...requestOptions,
+            })
+        )
+    ) as any
+
+initializeCli(omnibox, queryGraphQL)
 
 storage.getSync(({ sourcegraphURL }) => {
     // If no sourcegraphURL is set ensure we default back to https://sourcegraph.com.
@@ -59,7 +76,7 @@ storage.getSync(({ sourcegraphURL }) => {
         setSourcegraphUrl(DEFAULT_SOURCEGRAPH_URL)
     }
 
-    resolveClientConfiguration().subscribe(
+    resolveClientConfiguration(queryGraphQL).subscribe(
         config => {
             // ClientConfiguration is the new storage option.
             // Request permissions for the urls.
@@ -105,7 +122,7 @@ storage.onChanged((changes, areaName) => {
 
     if (changes.sourcegraphURL && changes.sourcegraphURL.newValue) {
         setSourcegraphUrl(changes.sourcegraphURL.newValue)
-        resolveClientConfiguration().subscribe(
+        resolveClientConfiguration(queryGraphQL).subscribe(
             config => {
                 // ClientConfiguration is the new storage option.
                 // Request permissions for the urls.
@@ -273,10 +290,24 @@ runtime.onMessage((message, _, cb) => {
                 })
             return true
         case 'requestGraphQL':
-            requestGraphQL(message.payload)
+            const { request, variables } = message.payload
+            queryGraphQL(
+                gql`
+                    ${request}
+                `,
+                variables
+            )
                 .toPromise()
-                .then(result => cb && cb({ result }))
-                .catch(err => cb && cb({ err }))
+                .then(result => {
+                    if (cb) {
+                        cb({ result })
+                    }
+                })
+                .catch(err => {
+                    if (cb) {
+                        cb({ err })
+                    }
+                })
             return true
     }
 

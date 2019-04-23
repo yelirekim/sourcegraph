@@ -1,18 +1,21 @@
 import storage from '../../browser/storage'
 import * as tabs from '../../browser/tabs'
 
+import { PlatformContext } from '../../../../../shared/src/platform/context'
 import { buildSearchURLQuery } from '../../../../../shared/src/util/url'
 import { createSuggestionFetcher } from '../../shared/backend/search'
 import { sourcegraphUrl } from '../../shared/util/context'
 
 const isURL = /^https?:\/\//
 
-class SearchCommand {
+export class SearchCommand {
     public description = 'Enter a search query'
 
-    private suggestionFetcher = createSuggestionFetcher(20)
+    private suggestionFetcher = createSuggestionFetcher(20, this.queryGraphQL)
 
     private prev: { query: string; suggestions: chrome.omnibox.SuggestResult[] } = { query: '', suggestions: [] }
+
+    constructor(private queryGraphQL: PlatformContext['queryGraphQL']) {}
 
     public getSuggestions = (query: string): Promise<chrome.omnibox.SuggestResult[]> =>
         new Promise(resolve => {
@@ -60,5 +63,3 @@ class SearchCommand {
         })
     }
 }
-
-export default new SearchCommand()

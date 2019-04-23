@@ -2,6 +2,7 @@ import { AdjustmentDirection, PositionAdjuster } from '@sourcegraph/codeintellif
 import { Position } from '@sourcegraph/extension-api-types'
 import { map } from 'rxjs/operators'
 import { convertSpacesToTabs, spacesToTabsAdjustment } from '.'
+import { PlatformContext } from '../../../../../shared/src/platform/context'
 import { FileSpec, RepoSpec, ResolvedRevSpec, RevSpec } from '../../../../../shared/src/util/url'
 import { fetchBlobContentLines } from '../../shared/repo/backend'
 import { CodeHost } from '../code_intelligence'
@@ -44,12 +45,10 @@ const adjustCharacter = (position: Position, adjustment: number): Position => ({
     character: position.character + adjustment,
 })
 
-const adjustPosition: PositionAdjuster<RepoSpec & RevSpec & FileSpec & ResolvedRevSpec> = ({
-    direction,
-    codeView,
-    position,
-}) =>
-    fetchBlobContentLines(position).pipe(
+const getPositionAdjuster = (
+    queryGraphQL: PlatformContext['queryGraphQL']
+): PositionAdjuster<RepoSpec & RevSpec & FileSpec & ResolvedRevSpec> => ({ direction, codeView, position }) =>
+    fetchBlobContentLines({ ...position, queryGraphQL }).pipe(
         map(lines => {
             const codeElement = diffDomFunctions.getCodeElementFromLineNumber(codeView, position.line, position.part)
             if (!codeElement) {
@@ -82,7 +81,7 @@ const toolbarButtonProps = {
 const commitCodeView: CodeViewSpec = {
     dom: diffDomFunctions,
     resolveFileInfo: resolveRevisionFileInfo,
-    adjustPosition,
+    getPositionAdjuster,
     getToolbarMount: codeView => {
         const actions = codeView.querySelector('.differential-changeset-buttons')
         if (!actions) {
@@ -103,7 +102,7 @@ const commitCodeView: CodeViewSpec = {
 export const diffCodeView = {
     dom: diffDomFunctions,
     resolveFileInfo: resolveDiffFileInfo,
-    adjustPosition,
+    getPositionAdjuster,
     getToolbarMount: (codeView: HTMLElement): HTMLElement => {
         const className = 'sourcegraph-app-annotator'
         const existingMount = codeView.querySelector<HTMLElement>('.' + className)

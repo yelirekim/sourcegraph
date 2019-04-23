@@ -1,17 +1,20 @@
 import * as runtime from '../../browser/runtime'
 import storage from '../../browser/storage'
 import { isPhabricator, isPublicCodeHost } from '../../context'
-import { EventLogger } from '../tracking/EventLogger'
+// import { EventLogger } from '../tracking/EventLogger'
 
 export const DEFAULT_SOURCEGRAPH_URL = 'https://sourcegraph.com'
 
-export let eventLogger = new EventLogger()
+// export let eventLogger = new EventLogger()
 
 export let sourcegraphUrl =
     window.localStorage.getItem('SOURCEGRAPH_URL') || window.SOURCEGRAPH_URL || DEFAULT_SOURCEGRAPH_URL
 
+// console.log('sourcegraphUrl', sourcegraphUrl)
+
 if (window.SG_ENV === 'EXTENSION') {
     storage.getSync(items => {
+        // console.log('storage sourcegraphURL', sourcegraphUrl)
         sourcegraphUrl = items.sourcegraphURL
     })
 }

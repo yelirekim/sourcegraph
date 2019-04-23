@@ -1,7 +1,12 @@
+import { PlatformContext } from '../../../../../shared/src/platform/context'
 import * as omnibox from '../../browser/omnibox'
-import searchCommand from './search'
+import { SearchCommand } from './search'
 
-export default function initialize({ onInputEntered, onInputChanged }: typeof omnibox): void {
+export default function initialize(
+    { onInputEntered, onInputChanged }: typeof omnibox,
+    queryGraphQL: PlatformContext['queryGraphQL']
+): void {
+    const searchCommand = new SearchCommand(queryGraphQL)
     onInputChanged((query, suggest) => {
         searchCommand
             .getSuggestions(query)

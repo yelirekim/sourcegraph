@@ -1,5 +1,6 @@
 import { AdjustmentDirection, DOMFunctions, PositionAdjuster } from '@sourcegraph/codeintellify'
 import { of } from 'rxjs'
+import { PlatformContext } from '../../../../../shared/src/platform/context'
 import { FileSpec, RepoSpec, ResolvedRevSpec, RevSpec } from '../../../../../shared/src/util/url'
 import { querySelectorOrSelf } from '../../shared/util/dom'
 import { CodeHost, MountGetter } from '../code_intelligence'
@@ -46,8 +47,8 @@ export const getToolbarMount = (codeView: HTMLElement): HTMLElement => {
  * Sometimes tabs are converted to spaces so we need to adjust. Luckily, there
  * is an attribute `cm-text` that contains the real text.
  */
-const createPositionAdjuster = (
-    dom: DOMFunctions
+const createPositionAdjuster = (dom: DOMFunctions) => (
+    queryGraphQL: PlatformContext['queryGraphQL']
 ): PositionAdjuster<RepoSpec & RevSpec & FileSpec & ResolvedRevSpec> => ({ direction, codeView, position }) => {
     const codeElement = dom.getCodeElementFromLineNumber(codeView, position.line, position.part)
     if (!codeElement) {
@@ -83,7 +84,7 @@ const singleFileSourceCodeView: CodeViewSpec = {
     getToolbarMount,
     dom: singleFileDOMFunctions,
     resolveFileInfo: resolveFileInfoForSingleFileSourceView,
-    adjustPosition: createPositionAdjuster(singleFileDOMFunctions),
+    getPositionAdjuster: createPositionAdjuster(singleFileDOMFunctions),
     toolbarButtonProps,
 }
 
@@ -93,7 +94,6 @@ const baseDiffCodeView = {
     adjustPosition: createPositionAdjuster(diffDOMFunctions),
     toolbarButtonProps,
 }
-
 /**
  * A code view spec for a single file "diff to previous" view
  */
